@@ -2,9 +2,9 @@
 var express = require('express');
 var app = express();
 
-// // 引入cors，解决跨域的问题
-// const cors = require('cors')
-// app.use(cors())
+// 引入cors，解决跨域的问题
+const cors = require('cors')
+app.use(cors())
 
 // 开启服务,监听8888端口
 app.listen(8888,(req,res)=>{
