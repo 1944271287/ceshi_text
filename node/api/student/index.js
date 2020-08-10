@@ -41,7 +41,10 @@ app.all('/inquire',(req, res)=>{
 
 // 新增
 app.all('/add', (req, res)=>{
-    var allocation = JSON.parse(req.body.data); // 获取文件数据 
+    console.log(req.body.data);
+
+    // return false;
+    var allocation = req.body.data; // 获取文件数据 
 
     var list = data.student,
     index = data.student.length - 1;
@@ -55,6 +58,8 @@ app.all('/add', (req, res)=>{
         "grade": allocation.grade,
         "enrollment_year": allocation.enrollment_year
     }
+    console.log('allocation------->', allocation);
+
     list.unshift(obj);
     
     readFile(list);
@@ -70,7 +75,24 @@ app.all('/add', (req, res)=>{
 })
 
 // 删除
-app.all('remove', (req, res)=>{
+app.all('/remove', (req, res)=>{
+    // return false;
+    var allocation = req.body.data; // 获取文件数据 
+    var list = data.student;
+
+    for(var i=0; i<list.length; i++){
+        if(allocation.id == list[i].id){
+            list.splice(i,1);
+            break;
+        }
+    }
+    readFile(list);
+    var code = {
+        code: 200,
+        message: '删除成功',
+    }
+
+    res.send(code);
 
 })
 
