@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        body,html,*{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <el-button @click="addNewClick">新增一条数据</el-button>
+        <el-table :data="tableData" style="width: 100%">
+            <el-table-column prop="name" label="名称" width="180">
+            </el-table-column>
+            <el-table-column prop="age" label="年龄" width="180">
+            </el-table-column>
+            <el-table-column prop="sex" label="性别" width="180">
+            </el-table-column>
+            <el-table-column prop="class" label="班级" width="180">
+            </el-table-column>
+            <el-table-column prop="grade" label="年级" width="180">
+            </el-table-column>
+            <el-table-column prop="enrollment_year" label="入学年份" width="180">
+            </el-table-column>
+        </el-table>
+        
+    </div>
+
+    <script>
+        const el = new Vue({
+            el:'#app',
+            data:()=>{
+                return {
+                    tableData: []
+                }
+            },
+            mounted(){
+                console.log('是否触发到了，嘿嘿');
+                this.init();
+            },
+            methods: {
+                // 初始化
+                init: function(){
+                    this.getTableData();
+                },
+
+                // 列表请求
+                getTableData: function(){
+                    var _this = this;
+                    axios.get(
+                        'http://localhost:8888/student/inquire',
+                        {
+                            params: {}
+                        }
+                    ).then((res) => {
+                        console.log('调用成功过', res)
+                        _this.tableData = res.data.list;
+                    }).catch((err) => {
+                        console.log('调用失败', err);
+                    })
+                },
+                addNewClick: function(){
+                    var _this = this;
+                    axios.post(
+                        'http://localhost:8888/student/add',
+                        {
+                            params: {
+                                age: 10,
+                                sex: '男',
+                                name: '亚索小二',
+                                class: '3班',
+                                grade: '五年级',
+                                enrollment_year: '2020'
+
+                            }
+                        }
+                    ).then((res) => {
+                        console.log('调用成功过', res)
+                        // _this.tableData = res.data.list;
+                        this.init();
+                    }).catch((err) => {
+                        console.log('调用失败', err);
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+</html>
