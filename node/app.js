@@ -34,6 +34,25 @@ app.use('/student', student);
 
 
 
+//test
+
+app.all('/ceshi',(req,res)=>{
+    var db = require('./public/db.js');
+    db.exec({
+        sql: 'select * from urer',
+        params: [],
+        callback: function (r) {
+            console.log('连接错误了吗------->');
+            console.log(r);
+        }
+    })
+    var code = {
+        data: [],
+        status:'成功调用测试接口，get请求',
+        status_code: 200,
+    }
+    res.send(code);
+})
 
 
 

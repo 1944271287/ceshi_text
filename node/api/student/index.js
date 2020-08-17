@@ -7,7 +7,7 @@ const fs = require('fs');
 const url = require('url');
 
 // 引入db自定义查询
-const db = require('../../public/db.js');
+const common = require('../../public/common.js');
 // 引入数据列表
 const data = require('../../api/data/student.js');
 
@@ -17,7 +17,7 @@ app.all('/inquire',(req, res)=>{
     // 获取请求的数据
     const params = url.parse(req.url, true).query;
 
-    var newArr = db.filterData(this,{
+    var newArr = common.filterData(this,{
         data: data.student,
         condition: (item)=>{
             var verify = {
@@ -58,7 +58,6 @@ app.all('/add', (req, res)=>{
         "grade": allocation.grade,
         "enrollment_year": allocation.enrollment_year
     }
-    console.log('allocation------->', allocation);
 
     list.unshift(obj);
     
@@ -76,7 +75,7 @@ app.all('/add', (req, res)=>{
 
 // 删除
 app.all('/remove', (req, res)=>{
-    // return false;
+    
     var allocation = req.body.data; // 获取文件数据 
     var list = data.student;
 
@@ -86,6 +85,7 @@ app.all('/remove', (req, res)=>{
             break;
         }
     }
+
     readFile(list);
     var code = {
         code: 200,
