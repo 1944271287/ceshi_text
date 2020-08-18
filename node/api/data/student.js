@@ -1,7 +1,8 @@
 
-        var student = [{"id":1,"name":"亚索小二","age":10,"sex":"男","class":"3班","grade":"五年级","enrollment_year":"2020"}];
+var data = [
+    { "name": "安妮", "age": "12", "sex": "女", "class": "二班", "grade": "六年级", "enrollment_year": "2020", "id": 1, "creation_time": "2020-08-18 15:40:15", "update_time": "2020-08-18 15:40:15" }
+];
 
-        module.exports = {
-            student: student
-        };
-    
+module.exports = {
+    data: data
+};

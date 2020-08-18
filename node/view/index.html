@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试</title>
+    <title>叫啥好</title>
     <link rel="stylesheet" href="./css/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
@@ -20,25 +20,68 @@
 </head>
 <body>
     <div id="app">
-        <el-button @click="addNewClick">新增一条数据</el-button>
-        <el-table :data="tableData" style="width: 100%">
-            <el-table-column label="操作">
+        
+        <div class="form">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" size='mini'>
+                <el-row :gutter='20'>
+                    <el-col :span="8">
+                        <el-form-item label="名称" prop="name">
+                            <el-input v-model="ruleForm.name"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="年龄" prop="age">
+                            <el-input v-model="ruleForm.age"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="性别" prop="sex">
+                            <el-input v-model="ruleForm.sex"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="班级" prop="class">
+                            <el-input v-model="ruleForm.class"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="年级" prop="grade">
+                            <el-input v-model="ruleForm.grade"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="入学年份" prop="enrollment_year">
+                            <el-input v-model="ruleForm.enrollment_year"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span='8'>
+                        <el-form-item>
+                            <el-button type="primary" @click='addNewClick' size='mini'>确定</el-button>
+                            <el-button type="primary" @click='addNewClick' size='mini'>保存为草稿</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+        </div>
+
+        <el-table :data="tableData" style="width: 100%" size='mini'>
+            <el-table-column label="操作" width="180">
                 <template slot-scope="scope">
-                    <el-button type="primary" size="mini">编辑</el-button>
+                    <el-button type="primary" size="mini" @click="openEdit(scope.row)">编辑</el-button>
                     <el-button type="danger" size="mini" @click="removeCellClick(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="名称" width="180">
+            <el-table-column prop="name" label="名称" >
             </el-table-column>
-            <el-table-column prop="age" label="年龄" width="180">
+            <el-table-column prop="age" label="年龄">
             </el-table-column>
-            <el-table-column prop="sex" label="性别" width="180">
+            <el-table-column prop="sex" label="性别">
             </el-table-column>
-            <el-table-column prop="class" label="班级" width="180">
+            <el-table-column prop="class" label="班级">
             </el-table-column>
-            <el-table-column prop="grade" label="年级" width="180">
+            <el-table-column prop="grade" label="年级">
             </el-table-column>
-            <el-table-column prop="enrollment_year" label="入学年份" width="180">
+            <el-table-column prop="enrollment_year" label="入学年份">
             </el-table-column>
         </el-table>
         
@@ -49,7 +92,35 @@
             el:'#app',
             data:()=>{
                 return {
-                    tableData: []
+                    tableData: [],
+                    ruleForm: {
+                        name: '',
+                        age: '',
+                        sex: '',
+                        class: '',
+                        grade: '',
+                        enrollment_year: '', 
+                    },
+                    rules: {
+                        name: [
+                            { required: true, message: '请输入名称', trigger: 'blur' },
+                        ],
+                        sex: [
+                            { required: true, message: '请选择性别', trigger: 'blur' },
+                        ],
+                        age: [
+                            { required: true, message: '请输入年龄', trigger: 'blur' },
+                        ],
+                        class: [
+                            { required: true, message: '请选择班级', trigger: 'blur' },
+                        ],
+                        grade: [
+                            { required: true, message: '请选择年级', trigger: 'blur' },
+                        ],
+                        enrollment_year: [
+                            { required: true, message: '请选择入学年份', trigger: 'blur' },
+                        ]
+                    }
                 }
             },
             mounted(){
@@ -80,22 +151,17 @@
                 // 添加
                 addNewClick: function(){
                     var _this = this;
+                    if(this.ruleForm.id){
+                        this.editCellClick();
+                        return false;
+                    }
                     axios.post(
                         'http://localhost:8888/student/add',
                         {
-                            data: {
-                                age: 10,
-                                sex: '男',
-                                name: '亚索小二',
-                                class: '3班',
-                                grade: '五年级',
-                                enrollment_year: '2020'
-
-                            }
+                            data: this.ruleForm
                         }
                     ).then((res) => {
-                        console.log('调用成功过', res)
-                        // _this.tableData = res.data.list;
+                        _this.resetForm();
                         this.init();
                     }).catch((err) => {
                         console.log('调用失败', err);
@@ -119,7 +185,46 @@
                     })
                 },
                 // 编辑
-                editCellClick: function(row){}
+                editCellClick: function(row){
+                    var _this = this;
+                    axios.post(
+                        'http://localhost:8888/student/edit',
+                        {
+                            data: this.ruleForm
+                        }
+                    ).then((res) => {
+                        if(res.data.code == 200){
+                            _this.resetForm();
+                            _this.init();
+                            _this.$message({
+                                message: res.data.message,
+                                type: 'success'
+                            });
+                        }
+                       
+                    }).catch((err) => {
+                        console.log('调用失败', err);
+                    })
+                },
+
+                // 重置表单
+                resetForm() {
+                    this.$refs['ruleForm'].resetFields();
+                    this.ruleForm = {
+                        name: '',
+                        age: '',
+                        sex: '',
+                        class: '',
+                        grade: '',
+                        enrollment_year: '', 
+                    };
+                },
+                openEdit: function(row){
+                    for(var k in this.ruleForm){
+                        this.ruleForm[k] = row[k];
+                    }
+                    this.ruleForm.id = row.id;
+                }
             }
         })
     </script>

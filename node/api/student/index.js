@@ -9,16 +9,17 @@ const url = require('url');
 // 引入db自定义查询
 const common = require('../../public/common.js');
 // 引入数据列表
-const data = require('../../api/data/student.js');
+const student = require('../../api/data/student.js');
+
+const filePath = './api/data/student.js';
 
 // 查询
 app.all('/inquire',(req, res)=>{
 
     // 获取请求的数据
     const params = url.parse(req.url, true).query;
-
     var newArr = common.filterData(this,{
-        data: data.student,
+        data: student.data,
         condition: (item)=>{
             var verify = {
                 sex: params.sex ? (params.sex == item.sex) : true, // 性别
@@ -41,52 +42,56 @@ app.all('/inquire',(req, res)=>{
 
 // 新增
 app.all('/add', (req, res)=>{
-    console.log(req.body.data);
-
-    // return false;
-    var allocation = req.body.data; // 获取文件数据 
-
-    var list = data.student,
-    index = data.student.length - 1;
-    var id = index < 0 ? 0: list[index].id;
-    var obj = {
-        "id": id + 1,
-        "name": allocation.name,
-        "age": allocation.age,
-        "sex": allocation.sex,
-        "class": allocation.class,
-        "grade": allocation.grade,
-        "enrollment_year": allocation.enrollment_year
-    }
-
-    list.unshift(obj);
-    
-    readFile(list);
-
     var code = {
         code: 200,
         message: '新增成功',
-        id: id + 1
     }
 
-    res.send(code);
+    do{
+        var allocation = req.body.data; // 获取文件数据
+        // 做唯一检验
+        var newArr = common.filterData(this,{
+            data: student.data,
+            condition: (item)=>{
+                return item.name == allocation.name; 
+            }
+        });
 
+        if(newArr.data.length > 0){
+            code.code = 301;
+            code.message = '该名称已经存在';
+            break;
+        }
+
+        code.id = common.addInsert(this, {
+            data: student.data,
+            path: filePath,
+            isAddTime: true,
+            form: allocation,
+            field: {
+                "name": '',
+                "age": '',
+                "sex": '',
+                "class": '',
+                "grade": '',
+                "enrollment_year": ''
+            }
+        })
+    }while(0);
+
+    res.send(code);
 })
 
 // 删除
 app.all('/remove', (req, res)=>{
-    
+
     var allocation = req.body.data; // 获取文件数据 
-    var list = data.student;
+    common.removeInsert(this,{
+        data: student.data,
+        path: filePath,
+        id: allocation.id
+    })
 
-    for(var i=0; i<list.length; i++){
-        if(allocation.id == list[i].id){
-            list.splice(i,1);
-            break;
-        }
-    }
-
-    readFile(list);
     var code = {
         code: 200,
         message: '删除成功',
@@ -97,21 +102,49 @@ app.all('/remove', (req, res)=>{
 })
 
 // 编辑
-app.all('edit', (req, res)=>{
+app.all('/edit', (req, res)=>{
+    var code = {
+        code: 200,
+        message: '编辑成功',
+    }
 
+    do{
+        var allocation = req.body.data; // 获取文件数据
+        // 做唯一检验
+        var newArr = common.filterData(this,{
+            data: student.data,
+            condition: (item)=>{
+                return item.name == allocation.name && item.id != allocation.id; 
+            }
+        });
+
+        if(newArr.data.length > 0){
+            code.code = 301;
+            code.message = '该名称已经存在';
+            break;
+        }
+
+        code.id = common.editInsert(this, {
+            data: student.data,
+            path: filePath,
+            form: allocation,
+        })
+    }while(0);
+
+    res.send(code);
 })
 
 const readFile = function(list){
     var text = `
-        var student = `+ JSON.stringify(list) +`;
+        var data = `+ JSON.stringify(list) +`;
 
         module.exports = {
-            student: student
+            data: data
         };
     `;
         
-    fs.writeFile('./api/data/student.js', text, (err)=>{
-        console.log('err------>', err);
+    fs.writeFile(filePath, text, (err)=>{
+        // console.log('err------>', err);
     })
     
 }
