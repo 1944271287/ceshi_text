@@ -118,6 +118,7 @@ module.exports = {
      * @param {*} config.data 操作的数据
      * @param {*} config.path 插入文件路径
      * @param {*} config.form 接受的表单数据
+     * @param {*} config.isUpdateTime 是否更新时间
      */
     editInsert: function(_this, config){
         if(!config.form.id){
@@ -129,10 +130,17 @@ module.exports = {
             if(config.form.id = item.id){
                 for(var k in config.form){
                     item[k] = config.form[k];
+                    
+                    // 是否添加时间，
+                    if(config.isUpdateTime){
+                        item.update_time = this.getPresentDate();
+                    }
                 }
                 break;
             }
         }
+        
+
         this.insertionFile(this, {
             data: config.data,
             path: config.path,

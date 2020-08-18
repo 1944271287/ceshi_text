@@ -49,6 +49,7 @@ app.all('/add', (req, res)=>{
 
     do{
         var allocation = req.body.data; // 获取文件数据
+
         // 做唯一检验
         var newArr = common.filterData(this,{
             data: student.data,
@@ -77,6 +78,7 @@ app.all('/add', (req, res)=>{
                 "enrollment_year": ''
             }
         })
+        
     }while(0);
 
     res.send(code);
@@ -127,8 +129,10 @@ app.all('/edit', (req, res)=>{
         code.id = common.editInsert(this, {
             data: student.data,
             path: filePath,
-            form: allocation,
+            isUpdateTime: true,
+            form: allocation
         })
+
     }while(0);
 
     res.send(code);
