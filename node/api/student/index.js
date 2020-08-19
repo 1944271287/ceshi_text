@@ -1,16 +1,15 @@
 // 引入express
 var express = require('express');
 var app = express();
-const fs = require('fs');
 
 // 引入url，解析get请求，获取get请求参数
 const url = require('url');
 
-// 引入db自定义查询
+// 引入common自定义查询
 const common = require('../../public/common.js');
 // 引入数据列表
 const student = require('../../api/data/student.js');
-
+// 修改文件路径
 const filePath = './api/data/student.js';
 
 // 查询
@@ -20,6 +19,10 @@ app.all('/inquire',(req, res)=>{
     const params = url.parse(req.url, true).query;
     var newArr = common.filterData(this,{
         data: student.data,
+        isPage: false,
+        pageSize: 2,
+        currentPage: 3,
+        returnField: ['id', 'name', 'age', 'sex'],
         condition: (item)=>{
             var verify = {
                 sex: params.sex ? (params.sex == item.sex) : true, // 性别
@@ -137,21 +140,6 @@ app.all('/edit', (req, res)=>{
 
     res.send(code);
 })
-
-const readFile = function(list){
-    var text = `
-        var data = `+ JSON.stringify(list) +`;
-
-        module.exports = {
-            data: data
-        };
-    `;
-        
-    fs.writeFile(filePath, text, (err)=>{
-        // console.log('err------>', err);
-    })
-    
-}
 
 
 module.exports = app;

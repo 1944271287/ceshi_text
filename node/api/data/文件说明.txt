@@ -2,3 +2,5 @@
 
 ##  student  学生信息数据
 
+## gradeClass  年级班级信息
+

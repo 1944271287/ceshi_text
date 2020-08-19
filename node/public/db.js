@@ -1,5 +1,5 @@
 /**
- * 数据库连接模块
+ * 数据库连接模块,配置
  * 2020-8-17 16:05:35
  * @param host  主机地址
  * @param user  用户名
@@ -12,13 +12,8 @@
  * @param bigNumberStrings  supportBigNumbers和bigNumberStrings启用 强制bigint或decimal列以JavaScript字符串类型返回（默认：false）
  * @param debug  是否开启调式
  */
-var config = {
-    'host': '120.78.152.53',
-    'user': 'root',
-    'password': 'root',
-    'port': '3306',
-    'database': 'light_fixture',
-};
+
+ 
     
 var mysql = require('mysql');
 
@@ -35,6 +30,7 @@ module.exports = {
         'database': 'light_fixture',
     },
     conn: null,
+
     /**
      * 创建连接池并连接
      * @param callback
@@ -44,6 +40,7 @@ module.exports = {
         console.log('me.config.host', me.config);
         me.conn = mysql.createConnection(me.config);
     },
+
     /**
      * 释放连接池
      * @param conn
@@ -54,6 +51,7 @@ module.exports = {
             // console.log(err);
         });
     },
+
     /**
      * 执行连接
      * @param config
@@ -63,7 +61,7 @@ module.exports = {
         me.openConn();
         me.conn.query(config.sql, config.params, function (err, res) {
             if (err) {
-                console.log('连接数据库发生错误------>', err);
+
             } else if (config.callback) {
                 config.callback(res);
             }
