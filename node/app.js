@@ -27,25 +27,26 @@ app.use(express.static(path.resolve(__dirname, './view')));
 const student = require('./api/student/index.js');
 app.use('/student', student);
 
-
-
-
-
-
-
-
 //test
+// app.all('/ceshi',(req,res)=>{
+//     var db = require('./public/db.js');
+//     db.exec({
+//         sql: 'select * from urer',
+//         params: [],
+//         callback: function (r) {
+//             console.log('连接错误了吗------->');
+//             console.log(r);
+//         }
+//     })
+//     var code = {
+//         data: [],
+//         status:'成功调用测试接口，get请求',
+//         status_code: 200,
+//     }
+//     res.send(code);
+// })
 
-app.all('/ceshi',(req,res)=>{
-    var db = require('./public/db.js');
-    db.exec({
-        sql: 'select * from urer',
-        params: [],
-        callback: function (r) {
-            console.log('连接错误了吗------->');
-            console.log(r);
-        }
-    })
+app.all('user/login', (req, res)    =>{
     var code = {
         data: [],
         status:'成功调用测试接口，get请求',
@@ -54,41 +55,18 @@ app.all('/ceshi',(req,res)=>{
     res.send(code);
 })
 
+var qr = require('qr-image')
 
+app.get('/create_qrcode', function (req, res, next) {
+  var text = '丑猪猪，最丑的小猪猪！！哈哈哈哈哈';
+  try {
+    var img = qr.image(text,{size :10});
+    res.writeHead(200, {'Content-Type': 'image/png'});
 
-
-
-
-
-
-
-
-
-
-// 引入自定义db文件
-// const db = require('./public/db.js');
-
-// // 读取文件
-// const studentss = fs.readFileSync('./api/data/student.js', 'utf-8');
-
-// // 引入学生信息
-// const student =  require('./api/data/student.js');
-// app.all('/ceshi',(req,res)=>{
-
-//     var newArr = db.filterData(this,{
-//         data: student.student,
-//         condition: (item)=>{
-//             return item.sex == '女' && item.class == '2班' && item.name.indexOf('离') != -1;
-//         }
-//     })
-
-
-//     var code = {
-//         data: newArr.data,
-//         totle: newArr.data.length,
-//         status:'成功调用测试接口，get请求',
-//         status_code: 200,
-//     }
-//     res.send(code);
-// })
-
+    var imgs = img.pipe(res);
+    console.log('imgs---->', imgs);
+  } catch (e) {
+    res.writeHead(414, {'Content-Type': 'text/html'});
+    res.end('<h1>414 Request-URI Too Large</h1>');
+  }
+})

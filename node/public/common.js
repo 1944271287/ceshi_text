@@ -9,12 +9,12 @@ module.exports = {
      * 筛选函数
      * @param {*} _this
      * @param {*} config
-     * @param {*} config.data 筛选数据
-     * @param {*} config.condition 筛选条件
-     * @param {*} config.isPage 是否分页
-     * @param {*} config.pageSize 每页多少条
-     * @param {*} config.currentPage 当前页
-     * @param {*} config.returnField 返回字段
+     * @param {*} config.data 筛选数据 , array
+     * @param {*} config.condition 筛选条件, Function
+     * @param {*} config.isPage 是否分页, Boolean
+     * @param {*} config.pageSize 每页多少条, number
+     * @param {*} config.currentPage 当前页, number
+     * @param {*} config.returnField 返回字段, array
      */
     filterData: function(_this, config){
 
@@ -27,7 +27,6 @@ module.exports = {
         if(config.isPage){
             var start = (config.pageSize* config.currentPage - config.pageSize),
                 end = start + config.pageSize;
-
             newData = list.slice(start, end);
         }
 
