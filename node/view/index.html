@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>叫啥好</title>
+    <title>测试node</title>
     <link rel="stylesheet" href="./css/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
@@ -39,19 +39,32 @@
                             <el-input v-model="ruleForm.sex"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="班级" prop="class">
-                            <el-input v-model="ruleForm.class"></el-input>
-                        </el-form-item>
-                    </el-col>
+                    
                     <el-col :span="8">
                         <el-form-item label="年级" prop="grade">
-                            <el-input v-model="ruleForm.grade"></el-input>
+                            <!-- <el-input v-model="ruleForm.grade"></el-input> -->
+                            <el-select v-model="ruleForm.grade" placeholder="请选择年级" @change='gradeChange' style="width: 100%">
+                                <el-option v-for="item in gradeList" :key="item.id" :label="item.name" :value="item.id">
+                                </el-option>
+                              </el-select>
                         </el-form-item>
                     </el-col>
+
+                    <el-col :span="8">
+                        <el-form-item label="班级" prop="class">
+                            <!-- <el-input v-model="ruleForm.class"></el-input> -->
+                            <el-select v-model="ruleForm.class" placeholder="请选择" style="width: 100%" :disabled='isDisabled'>
+                                <el-option v-for="item in classList" :key="item.id" :label="item.name" :value="item.id">
+                                </el-option>
+                              </el-select>
+                        </el-form-item>
+                    </el-col>
+                  
                     <el-col :span="8">
                         <el-form-item label="入学年份" prop="enrollment_year">
-                            <el-input v-model="ruleForm.enrollment_year"></el-input>
+                            <!-- <el-input v-model="ruleForm.enrollment_year"></el-input> -->
+                            <el-date-picker v-model="ruleForm.enrollment_year" type="year" placeholder="请选择入学年份" value-format='yyyy'>
+                            </el-date-picker>
                         </el-form-item>
                     </el-col>
                     <el-col :span='8'>
@@ -120,7 +133,10 @@
                         enrollment_year: [
                             { required: true, message: '请选择入学年份', trigger: 'blur' },
                         ]
-                    }
+                    },
+                    gradeList: [],
+                    classList: [],
+                    isDisabled: true
                 }
             },
             mounted(){
@@ -131,6 +147,7 @@
                 // 初始化
                 init: function(){
                     this.getTableData();
+                    this.getGradeList(0, 'gradeList');
                 },
 
                 // 列表请求
@@ -149,6 +166,28 @@
                     })
                 },
 
+                // 获取年级
+                getGradeList: function(pid, key){
+                    var _this = this;
+
+                    axios.get('http://localhost:8888/student/inquireClass', 
+                        {
+                            params: { pid: pid}
+                        }).then((res)=>{
+                            var list = res.data.list;
+
+                            _this[key] = list;
+                        }).catch((error)=>{
+
+                        })
+
+                },
+                gradeChange: function(e){
+                    this.ruleForm.class = '';
+                    this.isDisabled = false;
+                    this.getGradeList(e, 'classList');
+                },
+
                 // 添加
                 addNewClick: function(){
                     var _this = this;
@@ -163,8 +202,12 @@
                             data: this.ruleForm
                         }
                     ).then((res) => {
-                        _this.resetForm();
-                        this.init();
+                        if(res.data.code == 200){
+                            _this.resetForm();
+                            _this.getTableData(); 
+                        }else{
+                            _this.$message.error(res.data.message);
+                        }
                     }).catch((err) => {
                         console.log('调用失败', err);
                     })
@@ -172,6 +215,7 @@
 
                 // 删除
                 removeCellClick: function(row){
+                    var _this = this;
                     axios.post(
                         'http://localhost:8888/student/remove',
                         {
@@ -180,9 +224,12 @@
                             }
                         }
                     ).then((res) => {
-                        console.log('调用成功过', res)
-                        // _this.tableData = res.data.list;
-                        this.init();
+                        if(res.data.code == 200){
+                            _this.getTableData(); 
+                        }else{
+                            _this.$message.error(res.data.message); 
+                        }
+                        
                     }).catch((err) => {
                         console.log('调用失败', err);
                     })
@@ -199,11 +246,13 @@
                     ).then((res) => {
                         if(res.data.code == 200){
                             _this.resetForm();
-                            _this.init();
+                            _this.getTableData();
                             _this.$message({
                                 message: res.data.message,
                                 type: 'success'
                             });
+                        }else{
+                            _this.$message.error(res.data.message); 
                         }
                        
                     }).catch((err) => {

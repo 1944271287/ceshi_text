@@ -1,1 +1,9 @@
 ## 静态资源存放文件夹
+
+## fileConfigurationInfo  文件配置信息
+
+## student  学生
+
+## gradeClass  年级、班级
+
+## enumerate  枚举

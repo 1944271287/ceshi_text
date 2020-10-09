@@ -12,6 +12,6 @@
              * @param {*} update_time 更新时间
             */
            module.exports = {
-               data: [{"name":"晓晓","age":"18","sex":"女","class":14,"grade":1,"enrollment_year":"2021","id":3,"creation_time":"2020-010-09 11:31:14","update_time":"2020-010-09 15:11:14"},{"name":"小小","age":"18","sex":"女","class":13,"grade":1,"enrollment_year":"2021","id":4,"creation_time":"2020-010-09 15:20:59","update_time":"2020-010-09 15:20:59"}]
+               data: [{"name":"晓晓","age":"18","sex":"女","class":13,"grade":1,"enrollment_year":"2020","id":1,"creation_time":"2020-010-09 17:21:35","update_time":"2020-010-09 17:21:35"}]
            }
         
